@@ -13,21 +13,11 @@ function init(){
     document.body.appendChild(renderer.domElement)
 
     meshes.default1 = defaultMeshes()
-    meshes.default2 = defaultMeshes()
     scene.add(meshes.default1)
-    scene.add(meshes.default2)
     anim()
 }
 
-let radius = 1.3
-const clock = new THREE.Clock()
 function anim(){
-    let tick = clock.getDelta()
-    console.log(tick)
-    meshes.default1.position.x = radius*Math.cos(tick/15)
-    meshes.default1.position.y = radius*Math.sin(tick/15)
-    meshes.default2.position.x = radius*Math.cos(tick/15+Math.PI)
-    meshes.default2.position.y = radius*Math.sin(tick/15+Math.PI)
     renderer.render(scene,cam)
     requestAnimationFrame(anim)
 }
