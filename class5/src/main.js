@@ -1,5 +1,10 @@
 import * as THREE from "three"
-import {basicMesh,standardMesh,phongMesh,lambertMesh,physicalMesh} from "./defaultMeshes.js"
+import {defaultMeshes} from "./defaultMeshes.js"
+import {basicMesh} from "./basicMesh.js"
+import {standardMesh} from "./standardMesh.js"
+import {phongMesh} from "./phongMesh.js"
+import {lambertMesh} from "./lambertMesh.js"
+import {physicalMesh} from "./physicalMesh.js"
 import {pointLight,directionalLight} from "./light.js"
 
 const scene = new THREE.Scene()
@@ -13,19 +18,19 @@ const lights = {}
 function init(){
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
-
-    meshes.default1 = basicMesh()
+    meshes.basic = basicMesh()
     meshes.standard = standardMesh({x:2})
+    meshes.phong = phongMesh({x:-2})
+    meshes.lambert = lambertMesh({x:4})
+    meshes.physical = physicalMesh({x:-4})
+    lights.default = pointLight({x:2,y:2,z:2})
     lights.key = directionalLight({x:5,y:5,z:5})
-    scene.add(meshes.default1,meshes.standard,lights.key)
+    lights.rim = directionalLight({x:-7,y:-2,z:-2,color:"0xff9900"})
+    scene.add(meshes.basic,meshes.standard,lights.key,lights.rim,meshes.phong,meshes.lambert,meshes.physical)
     anim()
 }
 
 function anim(){
-    let tick = clock.getElapsedTime() 
-    let angle = tick
-    meshes.standard.position.x = Math.cos(angle)*2
-    meshes.standard.position.y = Math.sin(angle)*2
     renderer.render(scene,cam)
     requestAnimationFrame(anim)
 }
