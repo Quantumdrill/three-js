@@ -35,7 +35,7 @@ function instances(){
         position: new THREE.Vector3(0,-0.8,3),
         animationState: true,
         mixers: mixers
-    })
+})
     flowers.init()
 }
 

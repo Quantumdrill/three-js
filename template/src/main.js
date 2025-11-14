@@ -3,12 +3,14 @@ import {basicMesh,standardMesh,phongMesh,lambertMesh,physicalMesh} from "./defau
 import {pointLight,directionalLight} from "./light.js"
 import Model from "./model.js"
 import { texture } from "three/tsl"
+import {manager} from "./manager.js"
 
 const scene = new THREE.Scene()
 const renderer = new THREE.WebGLRenderer({antialias:true})
 const cam = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight,0.1,1000)
 cam.position.set(0,0,5)
 let clock = new THREE.Clock()
+const loadingManager = manager()
 const meshes = {}
 const lights = {}
 const mixers = []
@@ -34,7 +36,8 @@ function instances(){
         scale: new THREE.Vector3(2,2,2),
         position: new THREE.Vector3(0,-0.8,3),
         animationState: true,
-        mixers: mixers
+        mixers: mixers,
+        manager: loadingManager
     })
     flowers.init()
 }
@@ -44,6 +47,7 @@ function anim(){
     for (const mixer of mixers){
         mixer.update(delta)
     }
+    
     renderer.render(scene,cam)
     requestAnimationFrame(anim)
 }
