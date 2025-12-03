@@ -21,8 +21,18 @@ function init(){
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
 
+    modelLoader.load("/testLimb.fbx",(loaded)=>{
+        loaded.scale.set(0.3,0.3,0.3)
+        loaded.rotation.y = 1.57
+        console.log(loaded)
+        let bones = [loaded.children[0],loaded.children[0].children[0],loaded.children[0].children[0].children[0]]
+        bones[1].rotation.z = 1.57
+        const helper = new THREE.SkeletonHelper(loaded)
+        scene.add(loaded,helper)
+    })
+
     lights.key = directionalLight({x:5,y:5,z:5})
-    scene.add(lights.key,meshes.limb)
+    scene.add(lights.key)
     instances()
     anim()
 }
