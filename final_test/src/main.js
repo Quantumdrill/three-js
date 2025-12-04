@@ -3,7 +3,7 @@ import {basicMesh,standardMesh,phongMesh,lambertMesh,physicalMesh} from "./defau
 import {pointLight,directionalLight} from "./light.js"
 import Model from "./model.js"
 import { texture } from "three/tsl"
-import {manager} from "./manager.js"
+import { LoadingManager } from "three";
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 const scene = new THREE.Scene()
@@ -11,8 +11,8 @@ const renderer = new THREE.WebGLRenderer({antialias:true})
 const cam = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight,0.1,1000)
 cam.position.set(0,0,5)
 let clock = new THREE.Clock()
-const modelLoader = new FBXLoader();
-const loadingManager = manager()
+const loadingManager = new LoadingManager()
+const modelLoader = new FBXLoader(loadingManager);
 const meshes = {}
 const lights = {}
 const mixers = []
@@ -20,21 +20,22 @@ const mixers = []
 function init(){
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
-
+    // meshes.limbBones = []
     modelLoader.load("/testLimb.fbx",(loaded)=>{
-        loaded.scale.set(0.3,0.3,0.3)
-        loaded.rotation.y = 1.57
-        console.log(loaded)
-        let bones = [loaded.children[0],loaded.children[0].children[0],loaded.children[0].children[0].children[0]]
-        bones[1].rotation.z = 1.57
-        const helper = new THREE.SkeletonHelper(loaded)
-        scene.add(loaded,helper)
+        meshes.limb = loaded
+        meshes.limb.scale.set(0.3,0.3,0.3)
+        meshes.limb.rotation.y = 1.57
+        meshes.limbBones = [meshes.limb.children[0],meshes.limb.children[0].children[0],meshes.limb.children[0].children[0].children[0]]
+        meshes.limbBones[1].rotation.z = 1.57
+        const helper = new THREE.SkeletonHelper(meshes.limb)
+        scene.add(meshes.limb,helper)
+        console.log("fbx ready")
     })
-
+    
     lights.key = directionalLight({x:5,y:5,z:5})
     scene.add(lights.key)
-    instances()
-    anim()
+    // instances()
+    loadingManager.onLoad = ()=>{console.log("loaded");anim()}
 }
 
 function instances(){
@@ -57,7 +58,7 @@ function anim(){
     for (const mixer of mixers){
         mixer.update(delta)
     }
-    
+    meshes.limbBones[1].rotation.z = Math.sin(clock.getElapsedTime()*3)*1.57
     renderer.render(scene,cam)
     requestAnimationFrame(anim)
 }
