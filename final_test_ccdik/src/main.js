@@ -16,21 +16,30 @@ const modelLoader = new FBXLoader(loadingManager);
 const meshes = {}
 const lights = {}
 const mixers = []
+let ikSolver
 
 function init(){
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
     // meshes.limbBones = []
+
     modelLoader.load("/testLimb.fbx",(loaded)=>{
         meshes.limb = loaded
         meshes.limb.scale.set(0.3,0.3,0.3)
         meshes.limb.rotation.y = 1.57
-        meshes.limbBones = [meshes.limb.children[0],meshes.limb.children[0].children[0],meshes.limb.children[0].children[0].children[0]]
-        meshes.limbBones[1].rotation.z = 1.57
+        meshes.limb.bones = [meshes.limb.children[0],meshes.limb.children[0].children[0],meshes.limb.children[0].children[0].children[0]]
+        meshes.limb.bones[1].rotation.z = 1.57
         const helper = new THREE.SkeletonHelper(meshes.limb)
         scene.add(meshes.limb,helper)
-        console.log("fbx ready")
+        meshes.limb.skinnedMesh = meshes.limb.children[1]
+        meshes.limb.skeleton = meshes.limb.skinnedMesh.skeleton
+        console.log(meshes.limb.skeleton)
+        const iks = [{
+            
+        }]
     })
+
+
     
     lights.key = directionalLight({x:5,y:5,z:5})
     scene.add(lights.key)
@@ -58,7 +67,7 @@ function anim(){
     for (const mixer of mixers){
         mixer.update(delta)
     }
-    meshes.limbBones[1].rotation.z = Math.sin(clock.getElapsedTime()*3)*1.57
+    meshes.limb.bones[1].rotation.z = Math.sin(clock.getElapsedTime()*3)*1.57
     renderer.render(scene,cam)
     requestAnimationFrame(anim)
 }
